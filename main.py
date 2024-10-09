@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Sidebar setup
 st.sidebar.title("WORK")
-st.sidebar.image("path_to_logo_image.png")  # Replace with an actual image path if needed
+st.sidebar.image("C:\Users\Panch\Documents\Streamlitapp\imagenes\Screenshot 2024-07-19 165847.png")  # Replace with an actual image path if needed
 st.sidebar.write("platte")
 st.sidebar.write("Object Detection")
 
