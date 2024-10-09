@@ -1,66 +1,59 @@
 import streamlit as st
+import os
 from datetime import datetime
+from pathlib import Path
 
-# Set page layout
-st.set_page_config(page_title="Upload", layout="centered")
+# Sidebar setup
+st.sidebar.title("WORK")
+st.sidebar.image("path_to_logo_image.png")  # Replace with an actual image path if needed
+st.sidebar.write("platte")
+st.sidebar.write("Object Detection")
 
-# Custom CSS to style the page
+st.sidebar.title("DATA")
+sections = ["Settings", "Upload Data", "Annotate", "Dataset", "Analytics", "Generate"]
+for section in sections:
+    st.sidebar.button(section)
+
+# Main content for Upload Data section
+st.title("Upload")
+st.write(f"Batch Name: Uploaded on {datetime.now().strftime('%m/%d/%y at %I:%M %p')}")
+tags = st.text_input("Tags:", "Search or add tags for images...")
+
 st.markdown(
     """
-    <style>
-    .main-title {
-        font-size: 2.5rem;
-        color: #6c63ff;
-        font-weight: bold;
-        text-align: center;
-    }
-    .sub-title {
-        font-size: 1rem;
-        color: #A0A0A0;
-        text-align: center;
-    }
-    .upload-container {
-        border: 2px dashed #6c63ff;
-        padding: 2rem;
-        text-align: center;
-        border-radius: 10px;
-    }
-    .upload-button {
-        background-color: #6c63ff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    </style>
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Drag and drop to upload, or:</h3>
+    </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
-# Page title and subtitle
-st.markdown('<div class="main-title">Upload</div>', unsafe_allow_html=True)
+# File uploader
+uploaded_files = st.file_uploader("Select Files", type=["jpg", "png", "bmp", "webp"], accept_multiple_files=True)
 
-# Batch name (automatically generated)
-st.text_input("Batch Name:", value=f"Uploaded on {datetime.now().strftime('%m/%d/%y at %I:%M %p')}")
+# Folder scanning
+folder_path = st.text_input("Folder Path", placeholder="Enter folder path to scan for images")
 
-# Tags input
-st.text_input("Tags:", placeholder="Search or add tags for images...")
+if folder_path:
+    folder = Path(folder_path)
+    if folder.exists() and folder.is_dir():
+        image_files = [str(file) for file in folder.glob("*.jpg")]
+        image_files += [str(file) for file in folder.glob("*.png")]
+        image_files += [str(file) for file in folder.glob("*.bmp")]
+        image_files += [str(file) for file in folder.glob("*.webp")]
+        
+        st.write(f"Found {len(image_files)} images in folder:")
+        for img in image_files:
+            st.write(img)
+    else:
+        st.error("Invalid folder path.")
 
-# Upload section
-st.markdown('<div class="upload-container">', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Drag and drop to upload, or:</div>', unsafe_allow_html=True)
-
-col1, col2 = st.columns(2)
-with col1:
-    st.file_uploader("Select Files", accept_multiple_files=True)
-with col2:
-    st.file_uploader("Select Folder", accept_multiple_files=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Supported formats section
-st.write("Supported Formats")
-st.write("Images in .jpg, .png, .bmp, .webp")
-st.write("Annotations in 26 formats")
-st.write("Videos in .mov, .mp4")
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 40px;">
+        <button style="color: #8B00FF;">Supported Formats</button>
+        <p>Images: .jpg, .png, .bmp, .webp | Videos: .mov, .mp4</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
